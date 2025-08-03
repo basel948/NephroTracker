@@ -20,7 +20,7 @@ export default function Login() {
   const handleLogin = () => {
     router.replace("/welcome");
   };
-
+  console.log("Login component rendered");
   return (
     <View style={styles.container}>
       <View style={styles.row}>
