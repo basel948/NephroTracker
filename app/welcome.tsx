@@ -7,11 +7,10 @@ export default function SplashScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      router.replace("/dashboard");
-    }, 5000);
-
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => {
+      router.replace("/(tabs)/dashboard");
+    }, 3000);
+    return () => clearTimeout(t);
   }, []);
   // this will be the splash screen for the app, it will navigate to the dashboard after collecting all the necessary data from the database/backend
 
@@ -22,7 +21,7 @@ export default function SplashScreen() {
           Nephro<Text style={styles.subtitle}>Tracker</Text>
         </Text>
         <LottieView
-          source={require("../assets/animations/Abstract Isometric Loader #1.json")}
+          source={require("../assets/animations/loadingGif.json")}
           autoPlay
           loop
           style={styles.lottie}
