@@ -3,12 +3,12 @@ import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 
-export default function WelcomeScreen() {
+export default function SplashScreen() {
   const router = useRouter();
 
   useEffect(() => {
     const t = setTimeout(() => {
-      router.replace("/(tabs)/dashboard");
+      router.replace("/(main)/(tabs)/dashboard");
     }, 3000);
     return () => clearTimeout(t);
   }, []);
