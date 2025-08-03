@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import ColorList from "../../components/colorList";
+import ColorList from "../../../components/colorList";
 
 export default function Graphs() {
   return (
