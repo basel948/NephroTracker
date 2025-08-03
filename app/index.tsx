@@ -8,7 +8,7 @@ export default function Index() {
   useEffect(() => {
     // Short timeout ensures the RootLayout is mounted
     const t = setTimeout(() => {
-      router.replace("/welcome");
+      router.replace("./splash");
     }, 0);
 
     return () => clearTimeout(t);

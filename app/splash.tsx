@@ -1,31 +1,21 @@
 import { useRouter } from "expo-router";
-import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 
-export default function WelcomeScreen() {
+export default function Splash() {
   const router = useRouter();
-
   useEffect(() => {
     const t = setTimeout(() => {
-      router.replace("/(tabs)/dashboard");
-    }, 3000);
+      router.replace("./login");
+    }, 2000);
     return () => clearTimeout(t);
   }, []);
-  // this will be the splash screen for the app, it will navigate to the dashboard after collecting all the necessary data from the database/backend
-
   return (
     <View style={styles.container}>
       <View style={styles.row}>
         <Text style={styles.title}>
           Nephro<Text style={styles.subtitle}>Tracker</Text>
         </Text>
-        <LottieView
-          source={require("../assets/animations/loadingGif.json")}
-          autoPlay
-          loop
-          style={styles.lottie}
-        />
       </View>
     </View>
   );
@@ -52,5 +42,4 @@ const styles = StyleSheet.create({
     fontFamily:
       Platform.OS === "ios" ? "HelveticaNeue-Light" : "sans-serif-light",
   },
-  lottie: { width: 300, height: 300 },
 });
