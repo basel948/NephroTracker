@@ -1,27 +1,32 @@
-import { useRootNavigationState, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 
-export default function Welcome() {
+export default function SplashScreen() {
   const router = useRouter();
-  const navigationState = useRootNavigationState();
 
   useEffect(() => {
-    // Don't run redirect until the root stack is mounted
-    if (!navigationState?.key) return;
-
-    const timer = setTimeout(() => {
+    const t = setTimeout(() => {
       router.replace("/(tabs)/dashboard");
     }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [navigationState?.key]);
+    return () => clearTimeout(t);
+  }, []);
+  // this will be the splash screen for the app, it will navigate to the dashboard after collecting all the necessary data from the database/backend
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        Nephro<Text style={styles.subtitle}>Tracker</Text>
-      </Text>
+      <View style={styles.row}>
+        <Text style={styles.title}>
+          Nephro<Text style={styles.subtitle}>Tracker</Text>
+        </Text>
+        <LottieView
+          source={require("../assets/animations/loadingGif.json")}
+          autoPlay
+          loop
+          style={styles.lottie}
+        />
+      </View>
     </View>
   );
 }
@@ -29,15 +34,23 @@ export default function Welcome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
   },
+  row: { flexDirection: "column", alignItems: "center" },
   title: {
+    color: "black",
     fontSize: 38,
     fontWeight: "bold",
-    color: "black",
     fontFamily: Platform.OS === "ios" ? "San Francisco" : "Roboto",
   },
-  subtitle: { fontSize: 38, fontWeight: "300", color: "#07aa4b" },
+  subtitle: {
+    color: "#07aa4b",
+    fontSize: 38,
+    fontWeight: "light",
+    fontFamily:
+      Platform.OS === "ios" ? "HelveticaNeue-Light" : "sans-serif-light",
+  },
+  lottie: { width: 300, height: 300 },
 });

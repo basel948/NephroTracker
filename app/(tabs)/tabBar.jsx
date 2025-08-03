@@ -72,7 +72,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     paddingVertical: 15,
     borderRadius: 25,
-    borderCurve: "continuous",
+    // borderCurve: "continuous", //removed
+    overflow: "hidden", // added
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,
