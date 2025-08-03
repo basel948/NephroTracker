@@ -2,8 +2,8 @@ import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
 
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const primaryColor = "#0891b2";
-const greyColor = "#737373";
+const primaryColor = "#07aa4b";
+const greyColor = "#444444ff";
 
 const icons = {
   dashboard: (props) => <AntDesign name="home" size={26} {...props} />,
