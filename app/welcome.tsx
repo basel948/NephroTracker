@@ -8,7 +8,7 @@ export default function SplashScreen() {
 
   useEffect(() => {
     const t = setTimeout(() => {
-      router.replace("/(drawer)/(tabs)/dashboard");
+      router.replace("/(drawer)/dashboard");
     }, 3000);
     console.log(
       "Splash screen timeout set for 3 seconds, redirecting to dashboard"

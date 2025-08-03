@@ -1,5 +1,8 @@
-import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
+//this bottom tabbar is NOT IN USE.
+// It is replaced by the drawer navigation in the app layout and card in the dashboard layout/
+// this file is kept for reference and future use if needed.
 
+import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const primaryColor = "#07aa4b";
