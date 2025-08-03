@@ -11,8 +11,10 @@ export default function Index() {
       router.replace("./splash");
     }, 0);
 
+    console.log("Index component mounted, redirecting to splash screen");
     return () => clearTimeout(t);
   }, []);
 
+  console.log("Index rendered");
   return <View style={{ flex: 1, backgroundColor: "#fff" }} />;
 }

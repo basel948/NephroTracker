@@ -3,17 +3,20 @@ import LottieView from "lottie-react-native";
 import { useEffect } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 
-export default function WelcomeScreen() {
+export default function SplashScreen() {
   const router = useRouter();
 
   useEffect(() => {
     const t = setTimeout(() => {
-      router.replace("/(tabs)/dashboard");
+      router.replace("/(drawer)/(tabs)/dashboard");
     }, 3000);
+    console.log(
+      "Splash screen timeout set for 3 seconds, redirecting to dashboard"
+    );
     return () => clearTimeout(t);
   }, []);
   // this will be the splash screen for the app, it will navigate to the dashboard after collecting all the necessary data from the database/backend
-
+  console.log("Splash screen rendered, showing loading animation");
   return (
     <View style={styles.container}>
       <View style={styles.row}>
