@@ -1,3 +1,7 @@
+//this bottom tabbar is NOT IN USE.
+// It is replaced by the drawer navigation in the app layout and card in the dashboard layout/
+// this file is kept for reference and future use if needed.
+
 import { Tabs } from "expo-router";
 import TabBar from "./tabBar";
 

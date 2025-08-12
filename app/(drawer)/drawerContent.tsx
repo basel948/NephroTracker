@@ -15,7 +15,7 @@ const drawerTabs = [
   {
     label: "Dashboard",
     icon: (color: string) => <AntDesign name="home" size={24} color={color} />,
-    route: "/(drawer)/(tabs)/dashboard" as const,
+    route: "/(drawer)/dashboard" as const,
     match: "dashboard",
   },
   {
@@ -23,7 +23,7 @@ const drawerTabs = [
     icon: (color: string) => (
       <Entypo name="line-graph" size={24} color={color} />
     ),
-    route: "/(drawer)/(tabs)/graphs" as const,
+    route: "/(drawer)/graphs" as const,
     match: "graphs",
   },
   {
@@ -31,7 +31,7 @@ const drawerTabs = [
     icon: (color: string) => (
       <MaterialIcons name="inventory" size={24} color={color} />
     ),
-    route: "/(drawer)/(tabs)/inventory" as const,
+    route: "/(drawer)/inventory" as const,
     match: "inventory",
   },
 ];
@@ -40,7 +40,7 @@ const drawerProfile = [
   {
     label: "Profile",
     icon: (color: string) => <AntDesign name="user" size={24} color={color} />,
-    route: "/(drawer)/(tabs)/profile" as const,
+    route: "/(drawer)/profile" as const,
     match: "profile",
   },
 ];
