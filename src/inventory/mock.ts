@@ -1,0 +1,76 @@
+import { InventoryItem } from "./types";
+
+export const INITIAL_ITEMS: InventoryItem[] = [
+  {
+    id: "nacl100",
+    name: "NaCl 0.9% 100cc",
+    qty: 8,
+    unit: "pcs",
+    supplierId: "ELDAN",
+  },
+  {
+    id: "nacl500",
+    name: "NaCl 0.9% 500cc",
+    qty: 2,
+    unit: "pcs",
+    supplierId: "ELDAN",
+  },
+  {
+    id: "nacl1000",
+    name: "NaCl 0.9% 1000cc",
+    qty: 8,
+    unit: "pcs",
+    supplierId: "ELDAN",
+  },
+  {
+    id: "bicarb",
+    name: "ביקרבונט 650 גרם",
+    qty: 23,
+    unit: "box",
+    supplierId: "ELDAN",
+  },
+  {
+    id: "highca",
+    name: "תמיסת HIGH CA",
+    qty: 20,
+    unit: "box",
+    supplierId: "ELDAN",
+  },
+  {
+    id: "normca",
+    name: "תמיסת NORMAL CA",
+    qty: 13,
+    unit: "box",
+    supplierId: "ELDAN",
+  },
+  {
+    id: "lowca",
+    name: "תמיסת LOW CA",
+    qty: 10,
+    unit: "box",
+    supplierId: "ELDAN",
+  },
+  {
+    id: "lowca5l",
+    name: "LOW CA מיכל גדול 500 ליטר",
+    qty: 3,
+    unit: "pcs",
+    supplierId: "ELDAN",
+  },
+  { id: "16g", name: "מחט 16G", qty: 9, unit: "box", supplierId: "ELDAN" },
+  { id: "17g", name: "מחט 17G", qty: 15, unit: "box", supplierId: "ELDAN" },
+  {
+    id: "sn",
+    name: "סט ליניפרו SN",
+    qty: 31,
+    unit: "box",
+    supplierId: "ELDAN",
+  },
+  {
+    id: "cut",
+    name: "CUT FILTER אולטראפילטר",
+    qty: 8,
+    unit: "pcs",
+    supplierId: "ELDAN",
+  },
+];

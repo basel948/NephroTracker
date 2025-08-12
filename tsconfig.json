@@ -13,6 +13,7 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "components/colorList.tsx",
-    "app/(main)/(tabs)/tabBar.jsx"
+    "app/(main)/(tabs)/tabBar.jsx",
+    "src/**/*"
   ]
 }

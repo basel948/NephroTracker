@@ -1,21 +1,28 @@
-// app/(drawer)/DrawerContent.tsx
+// app/(drawer)/drawerContent.tsx
 import { AntDesign, Entypo, Feather, MaterialIcons } from "@expo/vector-icons";
 import {
   DrawerContentScrollView,
   type DrawerContentComponentProps,
 } from "@react-navigation/drawer";
-import { useRouter, useSegments } from "expo-router";
+import { Href, useRouter, useSegments } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const ACTIVE_COLOR = "#07aa4b";
 const INACTIVE_COLOR = "#444444ff";
 
-const drawerTabs = [
+type DrawerItem = {
+  label: string;
+  icon: (color: string) => React.ReactNode;
+  route: Href; // keep simple; use concrete strings for now
+  match: string;
+};
+
+const drawerTabs: DrawerItem[] = [
   {
     label: "Dashboard",
     icon: (color: string) => <AntDesign name="home" size={24} color={color} />,
-    route: "/(drawer)/dashboard" as const,
+    route: "/(drawer)/dashboard" as Href,
     match: "dashboard",
   },
   {
@@ -23,7 +30,7 @@ const drawerTabs = [
     icon: (color: string) => (
       <Entypo name="line-graph" size={24} color={color} />
     ),
-    route: "/(drawer)/graphs" as const,
+    route: "/(drawer)/graphs" as Href,
     match: "graphs",
   },
   {
@@ -31,16 +38,17 @@ const drawerTabs = [
     icon: (color: string) => (
       <MaterialIcons name="inventory" size={24} color={color} />
     ),
-    route: "/(drawer)/inventory" as const,
+    // Jump straight to the ELDAN tab (concrete path string)
+    route: "/(drawer)/inventory/(tabs)/ELDAN" as Href,
     match: "inventory",
   },
 ];
 
-const drawerProfile = [
+const drawerProfile: DrawerItem[] = [
   {
     label: "Profile",
     icon: (color: string) => <AntDesign name="user" size={24} color={color} />,
-    route: "/(drawer)/profile" as const,
+    route: "/(drawer)/profile" as Href,
     match: "profile",
   },
 ];
@@ -48,7 +56,6 @@ const drawerProfile = [
 export default function DrawerContent(props: DrawerContentComponentProps) {
   const router = useRouter();
   const segments = useSegments();
-  // The last segment will always be the active tab, e.g. ['(drawer)', '(tabs)', 'dashboard']
   const activeTab = segments[segments.length - 1] as string;
 
   return (
@@ -80,10 +87,8 @@ export default function DrawerContent(props: DrawerContentComponentProps) {
           })}
         </View>
 
-        {/* Spacer to push bottom section down */}
         <View style={{ flex: 1 }} />
 
-        {/* Bottom section */}
         <View style={styles.bottomSection}>
           {drawerProfile.map((item) => {
             const isActive = activeTab === item.match;
@@ -111,7 +116,7 @@ export default function DrawerContent(props: DrawerContentComponentProps) {
           <TouchableOpacity
             style={styles.drawerItem}
             onPress={() => {
-              router.replace("/login");
+              router.replace("/login" as Href);
               props.navigation.closeDrawer();
             }}
           >
@@ -134,20 +139,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 2,
   },
-  activeDrawerItem: {
-    backgroundColor: "#07aa4b33", // 20% opacity green
-  },
+  activeDrawerItem: { backgroundColor: "#07aa4b33" },
   drawerLabel: {
     marginLeft: 16,
     fontSize: 16,
     color: INACTIVE_COLOR,
     fontWeight: "500",
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#0055ffff",
-    marginVertical: 10,
-    marginHorizontal: 24,
   },
   bottomSection: {
     paddingBottom: 36,

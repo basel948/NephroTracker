@@ -20,7 +20,21 @@ export const dashboardCards: DashboardCard[] = [
     title: "Inventory",
     icon: <MaterialIcons name="inventory" size={36} color="#07aa4b" />,
     preview: <InventoryPreview />,
-    navigateTo: "/(drawer)/inventory",
+    // UPDATED: route to supplier tabs (default ELDAN)
+    navigateTo: "/(drawer)/inventory/(tabs)/ELDAN",
+  },
+  // (you can keep or remove these duplicate demos later)
+  {
+    title: "Graphs",
+    icon: <Entypo name="line-graph" size={36} color="#07aa4b" />,
+    preview: <GraphPreview />,
+    navigateTo: "/(drawer)/graphs",
+  },
+  {
+    title: "Inventory",
+    icon: <MaterialIcons name="inventory" size={36} color="#07aa4b" />,
+    preview: <InventoryPreview />,
+    navigateTo: "/(drawer)/inventory/(tabs)/ELDAN",
   },
   {
     title: "Graphs",
@@ -32,24 +46,10 @@ export const dashboardCards: DashboardCard[] = [
     title: "Inventory",
     icon: <MaterialIcons name="inventory" size={36} color="#07aa4b" />,
     preview: <InventoryPreview />,
-    navigateTo: "/(drawer)/inventory",
+    navigateTo: "/(drawer)/inventory/(tabs)/ELDAN",
   },
-  {
-    title: "Graphs",
-    icon: <Entypo name="line-graph" size={36} color="#07aa4b" />,
-    preview: <GraphPreview />,
-    navigateTo: "/(drawer)/graphs",
-  },
-  {
-    title: "Inventory",
-    icon: <MaterialIcons name="inventory" size={36} color="#07aa4b" />,
-    preview: <InventoryPreview />,
-    navigateTo: "/(drawer)/inventory",
-  },
-  // Add more cards here
 ];
 
-// Dummy preview components for now
 function GraphPreview() {
   return <>See your data trends</>;
 }
