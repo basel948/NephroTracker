@@ -1,4 +1,4 @@
-// app/(drawer)/inventory/[supplier].tsx
+// app/(drawer)/inventory/(tabs)/[supplier].tsx
 import TitleWithLine from "@/components/TitleWithLine";
 import { useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
@@ -19,9 +19,17 @@ import { useAuth } from "@/src/auth/AuthProvider";
 import { useInventory } from "@/src/inventory/InventoryProvider";
 import type { InventoryItem, SupplierId } from "@/src/inventory/types";
 
-export default function SupplierInventory() {
+// 👇 add prop so static tabs can force a supplier
+export default function SupplierInventory({
+  supplierOverride,
+}: {
+  supplierOverride?: SupplierId;
+}) {
   const params = useLocalSearchParams<{ supplier?: string }>();
-  const SUPPLIER = (params.supplier?.toUpperCase() as SupplierId) ?? "ELDAN";
+  const SUPPLIER =
+    supplierOverride ??
+    (params.supplier?.toUpperCase() as SupplierId) ??
+    "ELDAN";
 
   const { user } = useAuth();
   const { items, metaBySupplier, adjust, submitStocktake } = useInventory();
@@ -126,6 +134,8 @@ export default function SupplierInventory() {
     </SafeAreaView>
   );
 }
+
+// …(styles unchanged)…
 
 const styles = StyleSheet.create({
   auditBar: {

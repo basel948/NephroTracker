@@ -1,6 +1,7 @@
 // app/(drawer)/dashboardCards.ts
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+import { Text, View } from "react-native"; // <-- add
 
 export type DashboardCard = {
   title: string;
@@ -20,10 +21,9 @@ export const dashboardCards: DashboardCard[] = [
     title: "Inventory",
     icon: <MaterialIcons name="inventory" size={36} color="#07aa4b" />,
     preview: <InventoryPreview />,
-    // UPDATED: route to supplier tabs (default ELDAN)
     navigateTo: "/(drawer)/inventory/(tabs)/ELDAN",
   },
-  // (you can keep or remove these duplicate demos later)
+  // duplicates kept intentionally for layout demo
   {
     title: "Graphs",
     icon: <Entypo name="line-graph" size={36} color="#07aa4b" />,
@@ -51,8 +51,16 @@ export const dashboardCards: DashboardCard[] = [
 ];
 
 function GraphPreview() {
-  return <>See your data trends</>;
+  return (
+    <View>
+      <Text>See your data trends</Text>
+    </View>
+  );
 }
 function InventoryPreview() {
-  return <>Manage your stock</>;
+  return (
+    <View>
+      <Text>Manage your stock</Text>
+    </View>
+  );
 }
