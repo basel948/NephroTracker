@@ -10,7 +10,6 @@ export default function Splash() {
     }, 2000);
     return () => clearTimeout(t);
   }, []);
-  console.log("Splash screen rendered, redirecting to login");
   return (
     <View style={styles.container}>
       <View style={styles.row}>

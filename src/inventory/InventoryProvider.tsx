@@ -21,6 +21,11 @@ type Ctx = {
   metaBySupplier: Record<SupplierId, InventoryMeta>;
   stocktakes: Stocktake[];
   adjust: (itemId: string, delta: number, userId: string) => void;
+  updateUnit: (
+    itemId: string,
+    unit: InventoryItem["unit"],
+    userId: string
+  ) => void;
   submitStocktake: (
     supplierId: SupplierId,
     userId: string,
@@ -84,6 +89,21 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
+  const updateUnit: Ctx["updateUnit"] = (itemId, unit, userId) => {
+    setItems((prev) =>
+      prev.map((r) =>
+        r.id === itemId
+          ? {
+              ...r,
+              unit,
+              updatedAt: new Date().toISOString(),
+              updatedBy: userId,
+            }
+          : r
+      )
+    );
+  };
+
   const submitStocktake: Ctx["submitStocktake"] = (
     supplierId,
     userId,
@@ -108,7 +128,14 @@ export function InventoryProvider({ children }: { children: React.ReactNode }) {
   };
 
   const value = useMemo(
-    () => ({ items, metaBySupplier, stocktakes, adjust, submitStocktake }),
+    () => ({
+      items,
+      metaBySupplier,
+      stocktakes,
+      adjust,
+      updateUnit,
+      submitStocktake,
+    }),
     [items, metaBySupplier, stocktakes]
   );
 

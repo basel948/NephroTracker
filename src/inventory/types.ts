@@ -1,10 +1,24 @@
 import type { SupplierId } from "./suppliers";
 
+// 👇 Broaden unit support + export a single source of truth for the dropdown
+export type Unit = "pcs" | "box" | "bag" | "set" | "ml" | "L" | "mg" | "g";
+
+export const UNIT_OPTIONS: Unit[] = [
+  "pcs",
+  "box",
+  "bag",
+  "set",
+  "ml",
+  "L",
+  "mg",
+  "g",
+];
+
 export type InventoryItem = {
   id: string;
   name: string;
   qty: number;
-  unit: "box" | "pcs";
+  unit: Unit; // 👈 now uses Unit
   supplierId: SupplierId;
   updatedAt?: string; // last qty change
   updatedBy?: string; // userId

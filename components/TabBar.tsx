@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const primaryColor = "#07aa4b";
 const greyColor = "#444444ff";
@@ -23,8 +24,14 @@ export default function TabBar({
   descriptors,
   navigation,
 }: BottomTabBarProps) {
+  const insets = useSafeAreaInsets();
+
+  // Space the bar ABOVE the system nav (3 buttons) or gesture handle.
+  // Use a minimum margin on platforms with no inset.
+  const bottomOffset = Math.max(16, insets.bottom + 8);
+
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { bottom: bottomOffset }]}>
       <View style={styles.tabbar}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
@@ -78,7 +85,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    bottom: 16,
     alignItems: "center",
   },
   tabbar: {
@@ -89,7 +95,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 22,
     gap: 8,
-    // nice floating look
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.12,
