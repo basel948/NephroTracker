@@ -1,18 +1,32 @@
 import TitleWithLine from "@/components/TitleWithLine";
 import { useInventory } from "@/src/inventory/InventoryProvider";
+import { useFocusEffect } from "@react-navigation/native";
+import { useRouter } from "expo-router";
+import { useCallback } from "react";
+
 import React, { useMemo, useState } from "react";
 import {
   FlatList,
+  Keyboard,
   SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 
 export default function SearchInventory() {
+  const router = useRouter();
   const { items } = useInventory();
   const [q, setQ] = useState("");
+
+  useFocusEffect(
+    useCallback(() => {
+      // cleanup runs when screen loses focus (navigating away)
+      return () => setQ("");
+    }, [])
+  );
 
   const rows = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -35,6 +49,7 @@ export default function SearchInventory() {
           autoFocus
         />
       </View>
+
       {!q ? (
         <View style={styles.empty}>
           <Text style={styles.emptyText}>Start typing to find items…</Text>
@@ -48,7 +63,18 @@ export default function SearchInventory() {
           data={rows}
           keyExtractor={(r) => r.id}
           renderItem={({ item }) => (
-            <View style={styles.row}>
+            <TouchableOpacity
+              onPress={() => {
+                setQ("");
+                Keyboard.dismiss();
+                router.replace(
+                  `/(drawer)/inventory/(tabs)/${
+                    item.supplierId
+                  }?focus=${encodeURIComponent(item.id)}`
+                );
+              }}
+              style={styles.row}
+            >
               <Text style={[styles.cell, { flex: 5 }]} numberOfLines={1}>
                 {item.name}
               </Text>
@@ -63,9 +89,9 @@ export default function SearchInventory() {
               >
                 {item.supplierId}
               </Text>
-            </View>
+            </TouchableOpacity>
           )}
-          contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 16 }}
+          contentContainerStyle={{ paddingBottom: 16 }}
         />
       )}
     </SafeAreaView>
@@ -85,7 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: "#e5e7eb",
   },

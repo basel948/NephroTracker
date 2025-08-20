@@ -106,6 +106,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tabbar: {
+    width: "92%",
+    maxWidth: 560,
+    alignSelf: "center",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",

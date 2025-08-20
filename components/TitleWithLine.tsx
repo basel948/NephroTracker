@@ -13,8 +13,8 @@ export default function TitleWithLine({ title }: { title: string }) {
 const styles = StyleSheet.create({
   wrap: {
     alignItems: "center",
-    marginTop: 8,
-    marginBottom: 12,
+    marginTop: 16,
+    marginBottom: 16,
     justifyContent: "center",
   },
   line: {

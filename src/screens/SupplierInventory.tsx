@@ -4,7 +4,7 @@ import { useAuth } from "@/src/auth/AuthProvider";
 import { useInventory } from "@/src/inventory/InventoryProvider";
 import type { InventoryItem, SupplierId } from "@/src/inventory/types";
 import { AntDesign } from "@expo/vector-icons";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -30,16 +30,22 @@ const TABBAR_APPROX_HEIGHT = 72;
 
 export default function SupplierInventory({
   supplierId,
-  hideSearch = true, // 👈 default: we’ll hide the in-page search in tabs
+  hideSearch = true,
+  focusItemId,
 }: {
   supplierId: SupplierId;
   hideSearch?: boolean;
+  /** optional: when provided, auto-scroll & highlight this row */
+  focusItemId?: string;
 }) {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const { items, metaBySupplier, adjust, submitStocktake, updateUnit } =
     useInventory();
   const [q, setQ] = useState("");
+
+  const listRef = useRef<FlatList<InventoryItem>>(null);
+  const [flashId, setFlashId] = useState<string | null>(null);
 
   const rows = useMemo(
     () =>
@@ -52,6 +58,28 @@ export default function SupplierInventory({
         .sort((a, b) => a.name.localeCompare(b.name)),
     [items, q, supplierId]
   );
+
+  // Auto-scroll + brief highlight for focused item
+  useEffect(() => {
+    if (!focusItemId) return;
+    const idx = rows.findIndex((r) => r.id === focusItemId);
+    if (idx < 0) return;
+
+    setFlashId(focusItemId);
+    const t1 = setTimeout(() => {
+      listRef.current?.scrollToIndex({
+        index: idx,
+        animated: true,
+        viewPosition: 0.5,
+      });
+    }, 80);
+    const t2 = setTimeout(() => setFlashId(null), 1600);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [focusItemId, rows]);
 
   const meta = metaBySupplier[supplierId];
   const lastCheckedTxt = meta?.lastCheckedAt
@@ -79,13 +107,20 @@ export default function SupplierInventory({
   };
 
   const renderRow: ListRenderItem<InventoryItem> = ({ item, index }) => (
-    <View style={[styles.tr, index % 2 === 1 && styles.trAlt]}>
+    <View
+      style={[
+        styles.tr,
+        index % 2 === 1 && styles.trAlt,
+        item.id === flashId && { backgroundColor: "#ecfdf5" }, // flash highlight
+      ]}
+    >
       <Text numberOfLines={1} style={[styles.td, styles.name]}>
         {item.name}
       </Text>
-      <View style={styles.qtyCell}>
+
+      <View style={[styles.qtyCell]}>
         <TextInput
-          value={item.qty.toString()}
+          value={String(item.qty)}
           onChangeText={(text) => {
             const numericValue = parseInt(text, 10);
             if (!isNaN(numericValue) && numericValue >= 0) {
@@ -99,7 +134,8 @@ export default function SupplierInventory({
           style={styles.qtyInput}
         />
       </View>
-      <View style={styles.unitCell}>
+
+      <View style={[styles.unitCell]}>
         <Dropdown
           data={UNITS as unknown as any[]}
           labelField="label"
@@ -144,6 +180,7 @@ export default function SupplierInventory({
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={TABBAR_APPROX_HEIGHT}
       >
+        {/* Title with extra top/bottom margin */}
         <TitleWithLine title={`${supplierId} Inventory`} />
 
         {user?.role === "MANAGER" && (
@@ -170,18 +207,34 @@ export default function SupplierInventory({
           </View>
         )}
 
+        {/* Table header — full width */}
         <View style={[styles.tr, styles.thead]}>
           <Text style={[styles.th, styles.name]}>Name</Text>
           <Text style={[styles.th, styles.qtyHeader]}>Quantity</Text>
           <Text style={[styles.th, styles.unit]}>Unit</Text>
         </View>
 
+        {/* Table body — full width */}
         <FlatList
+          ref={listRef}
           data={rows}
           keyExtractor={(r) => r.id}
           renderItem={renderRow}
-          contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 16 }}
+          style={{ flex: 1, alignSelf: "stretch" }}
+          contentContainerStyle={{ paddingBottom: 16 }}
           ListFooterComponent={Footer}
+          onScrollToIndexFailed={(e) => {
+            listRef.current?.scrollToOffset({
+              offset: e.averageItemLength * e.index,
+              animated: true,
+            });
+            setTimeout(() => {
+              listRef.current?.scrollToIndex({
+                index: e.index,
+                animated: true,
+              });
+            }, 200);
+          }}
         />
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -234,7 +287,7 @@ const styles = StyleSheet.create({
   },
   trAlt: { backgroundColor: "#fafafa" },
   qtyInput: {
-    width: 68,
+    width: 60,
     height: 40,
     borderWidth: 1,
     borderColor: "#e5e7eb",
@@ -247,14 +300,14 @@ const styles = StyleSheet.create({
   },
   th: { fontSize: 13, fontWeight: "700", color: "#111" },
   td: { fontSize: 14, color: "#111" },
-  name: { flex: 6, paddingRight: 8 },
-  qtyHeader: { flex: 3, textAlign: "center" },
+  name: { flex: 6, paddingLeft: 4 },
+  qtyHeader: { flex: 3, textAlign: "center", paddingLeft: 24 },
   qtyCell: { flex: 3, alignItems: "center", justifyContent: "center" },
-  unit: { flex: 2, textAlign: "left", paddingLeft: 16, paddingRight: 4 },
-  unitCell: { flex: 2, alignItems: "flex-end", paddingRight: 4 },
+  unit: { flex: 2, textAlign: "left", paddingLeft: 38 },
+  unitCell: { flex: 2, alignItems: "flex-end", paddingRight: 8 },
   dropdown: {
     height: 40,
-    width: 68,
+    width: 70,
     borderWidth: 1,
     borderColor: "#e5e7eb",
     borderRadius: 8,
@@ -263,7 +316,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   dropdownMenu: { borderRadius: 8, borderColor: "#e5e7eb" },
-  dropdownText: { fontSize: 12, color: "#111" },
+  dropdownText: { fontSize: 12, color: "#111", fontWeight: "600" },
   dropdownItemText: { fontSize: 12, color: "#111" },
   footerWrap: { paddingHorizontal: 12, paddingTop: 8 },
   submitBtn: {
