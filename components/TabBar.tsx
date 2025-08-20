@@ -1,6 +1,7 @@
 import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import React from "react";
+import type { TextStyle, ViewStyle } from "react-native";
 import {
   Platform,
   StyleSheet,
@@ -10,13 +11,14 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const primaryColor = "#07aa4b";
-const greyColor = "#444444ff";
+const fallbackActive = "#07aa4b";
+const fallbackInactive = "#444444ff";
 
 const icons: Record<string, (p: { color: string }) => React.ReactElement> = {
   ELDAN: (props) => <MaterialIcons name="inventory" size={24} {...props} />,
   MAHER: (props) => <Entypo name="shop" size={24} {...props} />,
   MEDS: (props) => <AntDesign name="medicinebox" size={24} {...props} />,
+  search: (props) => <AntDesign name="search1" size={22} {...props} />,
 };
 
 export default function TabBar({
@@ -25,9 +27,6 @@ export default function TabBar({
   navigation,
 }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-
-  // Space the bar ABOVE the system nav (3 buttons) or gesture handle.
-  // Use a minimum margin on platforms with no inset.
   const bottomOffset = Math.max(16, insets.bottom + 8);
 
   return (
@@ -35,40 +34,59 @@ export default function TabBar({
       <View style={styles.tabbar}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
-          const label = (options.tabBarLabel ??
-            options.title ??
-            route.name) as string;
 
           if (["_sitemap", "+not-found"].includes(route.name)) return null;
 
+          const label = (options.tabBarLabel ??
+            options.title ??
+            route.name) as string;
           const isFocused = state.index === index;
+
+          const activeColor = options.tabBarActiveTintColor ?? fallbackActive;
+          const inactiveColor =
+            options.tabBarInactiveTintColor ?? fallbackInactive;
+
+          const color = isFocused ? activeColor : inactiveColor;
+
           const onPress = () => {
             const event = navigation.emit({
               type: "tabPress",
               target: route.key,
               canPreventDefault: true,
             });
-            if (!isFocused && !event.defaultPrevented) {
+            if (!isFocused && !event.defaultPrevented)
               navigation.navigate(route.name, route.params);
-            }
           };
 
           const Icon =
             icons[route.name] ??
-            (() => <AntDesign name="appstore-o" size={24} color={greyColor} />);
+            (() => (
+              <AntDesign name="appstore-o" size={24} color={inactiveColor} />
+            ));
+
+          const labelStyle = (options.tabBarLabelStyle ?? {}) as TextStyle;
+          const itemStyle = (options.tabBarItemStyle ?? {}) as ViewStyle;
 
           return (
             <TouchableOpacity
               key={route.key}
-              style={styles.tabbarItem}
               onPress={onPress}
+              style={[styles.tabbarItem, itemStyle]} // 👈 allow margin/padding from options
             >
-              <Icon color={isFocused ? primaryColor : greyColor} />
+              <Icon color={color} />
               <Text
-                style={{
-                  color: isFocused ? primaryColor : greyColor,
-                  fontSize: 11,
-                }}
+                numberOfLines={1}
+                style={[
+                  {
+                    color,
+                    fontSize: 11,
+                    fontWeight: "700",
+                    // default spacing if none provided; can be overridden by labelStyle
+                    marginTop: 6,
+                    marginBottom: 6,
+                  },
+                  labelStyle, // 👈 user-provided label margins win
+                ]}
               >
                 {label}
               </Text>
@@ -91,10 +109,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 22,
-    gap: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.12,
@@ -107,6 +124,7 @@ const styles = StyleSheet.create({
     minWidth: 90,
     justifyContent: "center",
     alignItems: "center",
-    gap: 4,
+    // ❌ remove gap so label margins actually affect spacing
+    // gap: 4,
   },
 });

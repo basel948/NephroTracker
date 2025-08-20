@@ -1,4 +1,4 @@
-import SupplierInventory from "./[supplier]";
+import SupplierInventory from "@/src/screens/SupplierInventory";
 export default function MEDS() {
-  return <SupplierInventory supplierOverride="MEDS" />;
+  return <SupplierInventory supplierId="MEDS" hideSearch={true} />;
 }

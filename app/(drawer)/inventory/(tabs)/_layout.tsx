@@ -15,6 +15,7 @@ export default function InventoryTabsLayout() {
       <Tabs.Screen name="ELDAN" options={{ title: "ELDAN" }} />
       <Tabs.Screen name="MAHER" options={{ title: "Maher" }} />
       <Tabs.Screen name="MEDS" options={{ title: "Medications" }} />
+      <Tabs.Screen name="search" options={{ title: "Search" }} />
     </Tabs>
   );
 }

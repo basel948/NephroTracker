@@ -1,7 +1,9 @@
-// app/(drawer)/inventory/(tabs)/[supplier].tsx
+// src/screens/SupplierInventory.tsx
 import TitleWithLine from "@/components/TitleWithLine";
+import { useAuth } from "@/src/auth/AuthProvider";
+import { useInventory } from "@/src/inventory/InventoryProvider";
+import type { InventoryItem, SupplierId } from "@/src/inventory/types";
 import { AntDesign } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
   Alert,
@@ -16,37 +18,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useAuth } from "@/src/auth/AuthProvider";
-import { useInventory } from "@/src/inventory/InventoryProvider";
-import type { InventoryItem, SupplierId } from "@/src/inventory/types";
-
-// external UI bits
-import { Dropdown } from "react-native-element-dropdown";
-
-// keep units aligned with your types ("box" | "pcs")
 const UNITS = [
   { label: "Box", value: "box" },
   { label: "Pcs", value: "pcs" },
 ] as const;
 
-// If you tweak your TabBar size, adjust this one number.
-const TABBAR_APPROX_HEIGHT = 72; // px (includes its own bottom margin)
+const TABBAR_APPROX_HEIGHT = 72;
 
 export default function SupplierInventory({
-  supplierOverride,
+  supplierId,
+  hideSearch = true, // 👈 default: we’ll hide the in-page search in tabs
 }: {
-  supplierOverride?: SupplierId;
+  supplierId: SupplierId;
+  hideSearch?: boolean;
 }) {
   const insets = useSafeAreaInsets();
-
-  const params = useLocalSearchParams<{ supplier?: string }>();
-  const SUPPLIER =
-    supplierOverride ??
-    (params.supplier?.toUpperCase() as SupplierId) ??
-    "ELDAN";
-
   const { user } = useAuth();
   const { items, metaBySupplier, adjust, submitStocktake, updateUnit } =
     useInventory();
@@ -55,16 +44,16 @@ export default function SupplierInventory({
   const rows = useMemo(
     () =>
       items
-        .filter((i) => i.supplierId === SUPPLIER)
+        .filter((i) => i.supplierId === supplierId)
         .filter(
           (i) =>
             !q.trim() || i.name.toLowerCase().includes(q.trim().toLowerCase())
         )
         .sort((a, b) => a.name.localeCompare(b.name)),
-    [items, q, SUPPLIER]
+    [items, q, supplierId]
   );
 
-  const meta = metaBySupplier[SUPPLIER];
+  const meta = metaBySupplier[supplierId];
   const lastCheckedTxt = meta?.lastCheckedAt
     ? new Date(meta.lastCheckedAt).toLocaleString()
     : "—";
@@ -72,14 +61,14 @@ export default function SupplierInventory({
   const onSubmitAudit = () => {
     if (Platform.OS === "ios") {
       Alert.prompt("Submit stock check", "Optional note", (text) =>
-        submitStocktake(SUPPLIER, user?.id ?? "anon", text || undefined)
+        submitStocktake(supplierId, user?.id ?? "anon", text || undefined)
       );
     } else {
-      Alert.alert("Submit stock check", `Mark ${SUPPLIER} as checked now?`, [
+      Alert.alert("Submit stock check", `Mark ${supplierId} as checked now?`, [
         { text: "Cancel", style: "cancel" },
         {
           text: "Submit",
-          onPress: () => submitStocktake(SUPPLIER, user?.id ?? "anon"),
+          onPress: () => submitStocktake(supplierId, user?.id ?? "anon"),
         },
       ]);
     }
@@ -87,17 +76,13 @@ export default function SupplierInventory({
 
   const onSubmitFilled = () => {
     Alert.alert("Submitted", "Your stocktake has been sent.");
-    // TODO: integrate with real save
   };
 
   const renderRow: ListRenderItem<InventoryItem> = ({ item, index }) => (
     <View style={[styles.tr, index % 2 === 1 && styles.trAlt]}>
-      {/* Name */}
       <Text numberOfLines={1} style={[styles.td, styles.name]}>
         {item.name}
       </Text>
-
-      {/* Quantity – manual numeric input */}
       <View style={styles.qtyCell}>
         <TextInput
           value={item.qty.toString()}
@@ -114,8 +99,6 @@ export default function SupplierInventory({
           style={styles.qtyInput}
         />
       </View>
-
-      {/* Unit – Dropdown */}
       <View style={styles.unitCell}>
         <Dropdown
           data={UNITS as unknown as any[]}
@@ -145,15 +128,11 @@ export default function SupplierInventory({
     </View>
   );
 
-  // Footer: button that appears only when you scroll to bottom,
-  // and sits above the floating TabBar thanks to the spacer.
   const Footer = () => (
     <View style={styles.footerWrap}>
       <TouchableOpacity style={styles.submitBtn} onPress={onSubmitFilled}>
         <Text style={styles.submitBtnTxt}>Submit</Text>
       </TouchableOpacity>
-
-      {/* This spacer ensures the button itself won’t be hidden by the TabBar */}
       <View style={{ height: insets.bottom + TABBAR_APPROX_HEIGHT + 8 }} />
     </View>
   );
@@ -165,7 +144,7 @@ export default function SupplierInventory({
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={TABBAR_APPROX_HEIGHT}
       >
-        <TitleWithLine title={`${SUPPLIER} Inventory`} />
+        <TitleWithLine title={`${supplierId} Inventory`} />
 
         {user?.role === "MANAGER" && (
           <View style={styles.auditBar}>
@@ -179,14 +158,17 @@ export default function SupplierInventory({
           </View>
         )}
 
-        <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
-          <TextInput
-            placeholder="Search item…"
-            value={q}
-            onChangeText={setQ}
-            style={styles.search}
-          />
-        </View>
+        {!hideSearch && (
+          <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+            <TextInput
+              placeholder="Search item…"
+              placeholderTextColor="#6b7280"
+              value={q}
+              onChangeText={setQ}
+              style={styles.search}
+            />
+          </View>
+        )}
 
         <View style={[styles.tr, styles.thead]}>
           <Text style={[styles.th, styles.name]}>Name</Text>
@@ -198,7 +180,6 @@ export default function SupplierInventory({
           data={rows}
           keyExtractor={(r) => r.id}
           renderItem={renderRow}
-          // keep a little breathing room, but main “above tabbar” space is in the Footer spacer
           contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 16 }}
           ListFooterComponent={Footer}
         />
@@ -284,12 +265,7 @@ const styles = StyleSheet.create({
   dropdownMenu: { borderRadius: 8, borderColor: "#e5e7eb" },
   dropdownText: { fontSize: 12, color: "#111" },
   dropdownItemText: { fontSize: 12, color: "#111" },
-
-  // Footer (scrolls with the list; shows only at the end)
-  footerWrap: {
-    paddingHorizontal: 12,
-    paddingTop: 8,
-  },
+  footerWrap: { paddingHorizontal: 12, paddingTop: 8 },
   submitBtn: {
     backgroundColor: "#07aa4b",
     paddingVertical: 12,

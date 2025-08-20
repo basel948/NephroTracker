@@ -1,4 +1,4 @@
-import SupplierInventory from "./[supplier]";
+import SupplierInventory from "@/src/screens/SupplierInventory";
 export default function MAHER() {
-  return <SupplierInventory supplierOverride="MAHER" />;
+  return <SupplierInventory supplierId="MAHER" hideSearch={true} />;
 }

@@ -1,4 +1,4 @@
-import SupplierInventory from "./[supplier]";
+import SupplierInventory from "@/src/screens/SupplierInventory";
 export default function ELDAN() {
-  return <SupplierInventory supplierOverride="ELDAN" />;
+  return <SupplierInventory supplierId="ELDAN" hideSearch={true} />;
 }

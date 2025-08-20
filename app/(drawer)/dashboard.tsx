@@ -1,7 +1,7 @@
+import { DashboardCard, dashboardCards } from "@/components/dashboardCards";
 import { Href, useRouter } from "expo-router";
 import { ScrollView } from "react-native";
 import CardTemplate from "../../components/cardTemplate";
-import { DashboardCard, dashboardCards } from "./dashboardCards";
 
 export default function Dashboard() {
   const router = useRouter();
