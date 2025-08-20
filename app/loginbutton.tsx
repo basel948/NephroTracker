@@ -1,7 +1,6 @@
 import { Platform, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 export default function LoginButton({ onPress }: { onPress: () => void }) {
-  console.log("LoginButton rendered");
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <Text style={styles.buttonText}>Login</Text>

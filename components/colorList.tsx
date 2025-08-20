@@ -1,7 +1,6 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 
 export default function ColorList({ color }: { color: string }) {
-  console.log("ColorList rendered with color:", color);
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {[1, 0.8, 0.5].map((opacity) => (
