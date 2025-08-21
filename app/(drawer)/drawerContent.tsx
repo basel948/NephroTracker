@@ -48,6 +48,22 @@ const drawerTabs: DrawerItem[] = [
     route: "/(drawer)/users" as Href,
     match: "users",
   },
+  {
+    label: "Schedule",
+    icon: (color: string) => (
+      <Feather name="calendar" size={24} color={color} />
+    ),
+    route: "/(drawer)/schedule" as Href,
+    match: "schedule",
+  },
+  {
+    label: "Requests",
+    icon: (color: string) => (
+      <Feather name="clipboard" size={24} color={color} />
+    ),
+    route: "/(drawer)/requests" as Href,
+    match: "requests",
+  },
 ];
 
 const drawerProfile: DrawerItem[] = [

@@ -1,6 +1,8 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import {
+  ActionSheetIOS,
+  Alert,
   Image,
   Linking,
   Platform,
@@ -23,6 +25,63 @@ export default function UserCard({ user }: { user: UserContact }) {
   const call = (num?: string) => num && Linking.openURL(`tel:${num}`);
   const email = (addr?: string) => addr && Linking.openURL(`mailto:${addr}`);
 
+  // WhatsApp helpers
+  const toWaNumber = (raw?: string) => (raw ?? "").replace(/[^\d]/g, ""); // expects intl format with country code
+  const openWhatsApp = async (num?: string, text?: string) => {
+    if (!num) return;
+    const phone = toWaNumber(num);
+    const candidates = [
+      {
+        scheme: "whatsapp://send",
+        url: `whatsapp://send?phone=${phone}${
+          text ? `&text=${encodeURIComponent(text)}` : ""
+        }`,
+      },
+      {
+        scheme: "whatsapp-business://send",
+        url: `whatsapp-business://send?phone=${phone}${
+          text ? `&text=${encodeURIComponent(text)}` : ""
+        }`,
+      },
+    ];
+    // Try app schemes first
+    for (const c of candidates) {
+      try {
+        if (await Linking.canOpenURL(c.scheme)) return Linking.openURL(c.url);
+      } catch {}
+    }
+    // Fallback to universal link
+    return Linking.openURL(
+      `https://wa.me/${phone}${text ? `?text=${encodeURIComponent(text)}` : ""}`
+    );
+  };
+
+  const chooseCall = (num?: string) => {
+    if (!num) return;
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          title: num,
+          options: ["Cancel", "Regular call", "WhatsApp"],
+          cancelButtonIndex: 0,
+        },
+        (i) => {
+          if (i === 1) call(num);
+          if (i === 2) openWhatsApp(num, `Hi ${user.username}`);
+        }
+      );
+    } else {
+      Alert.alert("Call with", num, [
+        { text: "Regular call", onPress: () => call(num) },
+        {
+          text: "WhatsApp",
+          onPress: () => openWhatsApp(num, `Hi ${user.username}`),
+        },
+        { text: "Cancel", style: "cancel" },
+      ]);
+    }
+  };
+
   return (
     <View style={styles.card}>
       <Image source={{ uri: user.image }} style={styles.avatar} />
@@ -39,7 +98,10 @@ export default function UserCard({ user }: { user: UserContact }) {
           <Text style={styles.value} numberOfLines={1}>
             {user.phone}
           </Text>
-          <Pressable style={styles.action} onPress={() => call(user.phone)}>
+          <Pressable
+            style={styles.action}
+            onPress={() => chooseCall(user.phone)}
+          >
             <Text style={styles.actionTxt}>Call</Text>
           </Pressable>
         </View>
@@ -52,7 +114,7 @@ export default function UserCard({ user }: { user: UserContact }) {
             </Text>
             <Pressable
               style={styles.action}
-              onPress={() => call(user.secondaryPhone)}
+              onPress={() => chooseCall(user.secondaryPhone)}
             >
               <Text style={styles.actionTxt}>Call</Text>
             </Pressable>
