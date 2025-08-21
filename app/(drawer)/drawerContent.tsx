@@ -42,6 +42,12 @@ const drawerTabs: DrawerItem[] = [
     route: "/(drawer)/inventory/(tabs)/ELDAN" as Href,
     match: "inventory",
   },
+  {
+    label: "Users",
+    icon: (color: string) => <Feather name="users" size={24} color={color} />,
+    route: "/(drawer)/users" as Href,
+    match: "users",
+  },
 ];
 
 const drawerProfile: DrawerItem[] = [
